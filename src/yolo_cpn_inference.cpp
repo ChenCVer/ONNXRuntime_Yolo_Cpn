@@ -348,6 +348,12 @@ void YoloCpnInference::inference(const char *data_path, struct Result& result, b
     vector<Mat> img_list;
     vector<map<string, float>> parameter_dict_list(ok_bbox_nums);
     for(int i=0; i<ok_bbox_nums; i++){
+        // Sometimes it’s very strange, the value(ok_bboxes[i][0] or ok_bboxes[i][1])
+        // will appear to be negative.
+        if(ok_bboxes[i][0] < 0) ok_bboxes[i][0] = 0;
+        if(ok_bboxes[i][1] < 0) ok_bboxes[i][1] = 0;
+        if(ok_bboxes[i][2] >cpn_src.cols) ok_bboxes[i][2] = cpn_src.cols;
+        if(ok_bboxes[i][3] >cpn_src.rows) ok_bboxes[i][2] = cpn_src.rows;
         Rect roi = Rect(int(ok_bboxes[i][0]), int(ok_bboxes[i][1]),
                         int(ok_bboxes[i][2]) - int(ok_bboxes[i][0]),
                         int(ok_bboxes[i][3]) - int(ok_bboxes[i][1]));
